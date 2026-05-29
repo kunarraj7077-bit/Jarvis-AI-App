@@ -1,1 +1,39 @@
+name: Build Android APK
 
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo-dev cmake libffi-dev libssl-dev
+
+      - name: Install Buildozer and Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install buildozer cython virtualenv
+
+      - name: Build APK
+        run: |
+          # Buildozer khud environment ko handle karega
+          buildozer android debug
+        env:
+          # Yeh command automatically licenses accept kar legi
+          BUILDOZER_ACCEPT_SDK_LICENSE: 1
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Jarvis-APK
+          path: bin/*.apk
