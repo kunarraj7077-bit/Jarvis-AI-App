@@ -20,21 +20,10 @@ jobs:
           pip install --upgrade pip
           pip install buildozer cython
           
-      - name: Accept Android SDK licenses
-        run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          if [ -d "$ANDROID_HOME/cmdline-tools/latest/bin" ]; then
-            yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-          elif [ -d "$ANDROID_HOME/tools/bin" ]; then
-            yes | $ANDROID_HOME/tools/bin/sdkmanager --licenses
-          else
-            echo "SDK Manager not found in standard locations"
-          fi
-          
       - name: Build with Buildozer
         run: |
-          yes | buildozer android debug
+          # Buildozer khud licenses handle karne ki koshish karega
+          buildozer android debug
           
       - name: Upload APK
         uses: actions/upload-artifact@v4
